@@ -1,6 +1,6 @@
 plugins {
 	id("java-library")
-	id("io.spring.dependency-management") version "1.1.5"
+	id("maven-publish")
 }
 
 group = "pe.ask"
@@ -16,15 +16,11 @@ repositories {
 	mavenCentral()
 }
 
-dependencyManagement {
-	imports {
-		mavenBom("org.springframework.boot:spring-boot-dependencies:4.0.5")
-	}
-}
-
 dependencies {
+	implementation(platform("org.springframework.boot:spring-boot-dependencies:4.0.5"))
+
 	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-	implementation ("com.fasterxml.jackson.core:jackson-databind")
+	implementation("com.fasterxml.jackson.core:jackson-databind")
 
 	implementation("org.postgresql:r2dbc-postgresql")
 
@@ -32,6 +28,18 @@ dependencies {
 	annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor")
 
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+publishing {
+	publications {
+		create<MavenPublication>("mavenJava") {
+			from(components["java"])
+			pom {
+				name.set("SQL Persistence Core")
+				description.set("")
+			}
+		}
+	}
 }
 
 tasks.withType<Test> {
