@@ -17,15 +17,16 @@ repositories {
 }
 
 dependencies {
-	implementation(platform("org.springframework.boot:spring-boot-dependencies:4.0.5"))
+	val springBootVersion = "4.0.5"
+	api(platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion"))
 
-	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-	implementation("com.fasterxml.jackson.core:jackson-databind")
+	api("org.springframework.boot:spring-boot-starter-data-r2dbc")
+	api("com.fasterxml.jackson.core:jackson-databind")
 
 	implementation("org.postgresql:r2dbc-postgresql")
 
-	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-	annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor")
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion")
+	annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor:$springBootVersion")
 
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
@@ -36,7 +37,7 @@ publishing {
 			from(components["java"])
 			pom {
 				name.set("SQL Persistence Core")
-				description.set("")
+				description.set("Librería core de persistencia reactiva para los microservicios")
 			}
 		}
 	}
