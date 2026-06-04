@@ -9,11 +9,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.r2dbc.autoconfigure.R2dbcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import java.time.Duration;
 
-@AutoConfiguration
+@AutoConfiguration(before = R2dbcAutoConfiguration.class)
 @ConditionalOnClass({ConnectionPool.class, PostgresqlConnectionFactory.class})
 @ConditionalOnProperty(prefix = "pe.ask.persistence", name = {"host", "database", "username"})
 @EnableConfigurationProperties(PostgresqlConnectionProperties.class)
