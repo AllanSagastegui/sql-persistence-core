@@ -4,6 +4,7 @@ import io.r2dbc.pool.ConnectionPool;
 import io.r2dbc.pool.ConnectionPoolConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
+import io.r2dbc.spi.ConnectionFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,8 +25,8 @@ public class PostgreSQLConnectionPool {
     public static final int MAX_IDLE_TIME = 30;
 
     @Bean
-    @ConditionalOnMissingBean(ConnectionPool.class)
-    public ConnectionPool getConnectionConfig(PostgresqlConnectionProperties properties) {
+    @ConditionalOnMissingBean(ConnectionFactory.class)
+    public ConnectionFactory connectionFactory(PostgresqlConnectionProperties properties) {
         PostgresqlConnectionConfiguration dbConfiguration = PostgresqlConnectionConfiguration.builder()
                 .host(properties.host())
                 .port(properties.port())
@@ -33,7 +34,6 @@ public class PostgreSQLConnectionPool {
                 .schema(properties.schema())
                 .username(properties.username())
                 .password(properties.password())
-                //.sslMode(SSLMode.REQUIRE)
                 .build();
 
         ConnectionPoolConfiguration poolConfiguration = ConnectionPoolConfiguration.builder()
