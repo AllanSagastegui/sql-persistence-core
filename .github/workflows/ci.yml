@@ -26,7 +26,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and Test
-        run: ./gradlew build jacocoTestReport -x checkstyleMain -x checkstyleTest
+        run: ./gradlew build jacocoTestReport
 
       - name: Add Coverage PR Comment
         uses: madrapps/jacoco-report@v1.7.1

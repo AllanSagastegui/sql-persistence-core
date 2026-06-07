@@ -4,15 +4,26 @@ import pe.quillqasoft.dev.core.catalog.BaseExceptionCatalog;
 
 import java.util.Map;
 
+/**
+ * Catalog of errors for the persistence core module.
+ * <p>
+ * Defines specific error codes, names, messages, and HTTP status codes
+ * that can be used throughout the persistence layer.
+ * </p>
+ *
+ * @author Allan Sagastegui
+ */
 public enum ErrorCatalog implements BaseExceptionCatalog {
+    /**
+     * Error indicating that mapping between domain and entity failed.
+     */
     MAP_FAILED(
             "ERR-PERSISTENCE-001",
             "MAP_FAILED",
-            "The requested user could not be found in the system.",
-            404,
+            "An unexpected error occurred while mapping between the domain object and the persistence entity.",
+            500,
             null
-    )
-    ;
+    );
 
     private final String errorCode;
     private final String exceptionName;

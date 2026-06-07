@@ -18,11 +18,39 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * Helper base class for reactive operations, providing generic CRUD functionality.
+ * <p>
+ * Bridges the gap between domain models and database entities using a generic bean mapper.
+ * It includes methods for saving, finding, patching, and paginating records.
+ * </p>
+ *
+ * @param <D> the domain model type
+ * @param <E> the entity model type
+ * @param <I> the identifier type
+ * @param <R> the reactive repository type extending {@link ReactiveCrudRepository} and {@link ReactiveQueryByExampleExecutor}
+ *
+ * @author Allan Sagastegui
+ */
 public abstract class ReactiveOperationsHelper <D, E, I, R extends ReactiveCrudRepository<E, I> & ReactiveQueryByExampleExecutor<E>> {
+
+    /**
+     * The repository used for database operations.
+     */
     protected R repository;
+
     private final GenericBeanMapper<D, E> mapper;
+
+    /**
+     * The default field to sort by.
+     */
     protected String defaultSortField = "id";
 
+    /**
+     * Constructs a new ReactiveOperationsHelper.
+     *
+     * @param repository the repository instance
+     */
     @SuppressWarnings("unchecked")
     protected ReactiveOperationsHelper(R repository) {
         this.repository = repository;
@@ -32,18 +60,41 @@ public abstract class ReactiveOperationsHelper <D, E, I, R extends ReactiveCrudR
         this.mapper = new GenericBeanMapper<>(domainClass, entityClass);
     }
 
+    /**
+     * Gets the current repository instance.
+     *
+     * @return the repository instance
+     */
     protected R getRepository() {
         return this.repository;
     }
 
+    /**
+     * Converts a domain model to an entity.
+     *
+     * @param domain the domain model
+     * @return the corresponding entity
+     */
     protected E toEntity(D domain) {
         return mapper.toEntity(domain);
     }
 
+    /**
+     * Converts an entity to a domain model.
+     *
+     * @param domain the entity
+     * @return the corresponding domain model
+     */
     protected D toDomain(E domain) {
         return mapper.toDomain(domain);
     }
 
+    /**
+     * Saves a domain model.
+     *
+     * @param domain the domain model to save
+     * @return a Mono emitting the saved domain model
+     */
     public Mono<D> save(D domain) {
         return Mono.justOrEmpty(domain)
                 .map(this::toEntity)
@@ -52,24 +103,53 @@ public abstract class ReactiveOperationsHelper <D, E, I, R extends ReactiveCrudR
                 .map(this::toDomain);
     }
 
+    /**
+     * Saves multiple domain models.
+     *
+     * @param domains a Flux of domain models to save
+     * @return a Flux emitting the saved domain models
+     */
     public Flux<D> saveAll(Flux<D> domains) {
         return repository.saveAll(domains.map(this::toEntity))
                 .map(this::toDomain);
     }
 
+    /**
+     * Finds a domain model by its identifier.
+     *
+     * @param id the identifier
+     * @return a Mono emitting the domain model if found
+     */
     public Mono<D> findById(I id) {
         return repository.findById(id)
                 .map(this::toDomain);
     }
 
+    /**
+     * Checks if a domain model exists by its identifier.
+     *
+     * @param id the identifier
+     * @return a Mono emitting true if it exists, false otherwise
+     */
     public Mono<Boolean> existsById(I id) {
         return repository.existsById(id);
     }
 
+    /**
+     * Counts the total number of domain models.
+     *
+     * @return a Mono emitting the total count
+     */
     public Mono<Long> count() {
         return repository.count();
     }
 
+    /**
+     * Finds domain models matching the given example.
+     *
+     * @param domain the example domain model
+     * @return a Flux emitting the matching domain models
+     */
     public Flux<D> findByExample(D domain) {
         return Mono.justOrEmpty(domain)
                 .map(this::toEntity)
@@ -78,11 +158,26 @@ public abstract class ReactiveOperationsHelper <D, E, I, R extends ReactiveCrudR
                 .map(this::toDomain);
     }
 
+    /**
+     * Finds all domain models.
+     *
+     * @return a Flux emitting all domain models
+     */
     public Flux<D> findAll() {
         return repository.findAll()
                 .map(this::toDomain);
     }
 
+    /**
+     * Finds a paginated list of domain models matching the given example with sorting.
+     *
+     * @param domain the example domain model
+     * @param page the page number
+     * @param size the page size
+     * @param sort the sort field
+     * @param direction the sort direction
+     * @return a Mono emitting the paginated response
+     */
     public Mono<PageResponse<D>> findPaginated(D domain, int page, int size, String sort, String direction) {
         org.springframework.data.domain.PageRequest springPageRequest = org.springframework.data.domain.PageRequest.of(
                 page,
@@ -116,14 +211,36 @@ public abstract class ReactiveOperationsHelper <D, E, I, R extends ReactiveCrudR
                 ));
     }
 
+    /**
+     * Finds a paginated list of domain models matching the given example.
+     *
+     * @param domain the example domain model
+     * @param page the page number
+     * @param size the page size
+     * @return a Mono emitting the paginated response
+     */
     public Mono<PageResponse<D>> findPaginated(D domain, int page, int size) {
         return this.findPaginated(domain, page, size, null, null);
     }
 
+    /**
+     * Finds a paginated list of all domain models.
+     *
+     * @param page the page number
+     * @param size the page size
+     * @return a Mono emitting the paginated response
+     */
     public Mono<PageResponse<D>> findPaginated(int page, int size) {
         return this.findPaginated(null, page, size, null, null);
     }
 
+    /**
+     * Patches a domain model by its identifier with partial data.
+     *
+     * @param id the identifier
+     * @param partialDomain the partial domain model data
+     * @return a Mono emitting the patched domain model
+     */
     public Mono<D> patch(I id, D partialDomain) {
         return repository.findById(id)
                 .map(existingEntity -> {
@@ -135,6 +252,12 @@ public abstract class ReactiveOperationsHelper <D, E, I, R extends ReactiveCrudR
                 .map(this::toDomain);
     }
 
+    /**
+     * Counts the number of domain models matching the given example.
+     *
+     * @param domain the example domain model
+     * @return a Mono emitting the count
+     */
     public Mono<Long> countByExample(D domain) {
         return Mono.justOrEmpty(domain)
                 .map(this::toEntity)
@@ -142,6 +265,12 @@ public abstract class ReactiveOperationsHelper <D, E, I, R extends ReactiveCrudR
                 .flatMap(repository::count);
     }
 
+    /**
+     * Checks if a domain model matching the given example exists.
+     *
+     * @param domain the example domain model
+     * @return a Mono emitting true if it exists, false otherwise
+     */
     public Mono<Boolean> existsByExample(D domain) {
         return Mono.justOrEmpty(domain)
                 .map(this::toEntity)
@@ -149,10 +278,22 @@ public abstract class ReactiveOperationsHelper <D, E, I, R extends ReactiveCrudR
                 .flatMap(repository::exists);
     }
 
+    /**
+     * Hook method called before saving an entity.
+     *
+     * @param entity the entity to be saved
+     * @return the modified entity
+     */
     protected E beforeSave(E entity) {
         return entity;
     }
 
+    /**
+     * Copies non-null properties from source to target.
+     *
+     * @param source the source object
+     * @param target the target object
+     */
     protected void copyNonNullProperties(Object source, Object target) {
         BeanUtils.copyProperties(source, target, getNullPropertyNames(source));
     }

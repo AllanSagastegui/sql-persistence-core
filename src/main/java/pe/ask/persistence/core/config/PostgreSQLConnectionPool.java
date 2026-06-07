@@ -15,15 +15,48 @@ import org.springframework.context.annotation.Bean;
 
 import java.time.Duration;
 
+/**
+ * Configuration class for creating the PostgreSQL R2DBC Connection Pool.
+ * <p>
+ * This auto-configuration is triggered before the default {@link org.springframework.boot.r2dbc.autoconfigure.R2dbcAutoConfiguration}
+ * and sets up a customized connection pool using the provided {@link PostgresqlConnectionProperties}.
+ * </p>
+ *
+ * @author Allan Sagastegui
+ */
 @AutoConfiguration(before = R2dbcAutoConfiguration.class)
 @ConditionalOnClass({ConnectionPool.class, PostgresqlConnectionFactory.class})
 @ConditionalOnProperty(prefix = "pe.ask.persistence", name = {"host", "database", "username"})
 @EnableConfigurationProperties(PostgresqlConnectionProperties.class)
 public class PostgreSQLConnectionPool {
+
+    /**
+     * Default constructor for PostgreSQLConnectionPool.
+     */
+    public PostgreSQLConnectionPool() {
+    }
+
+    /**
+     * The initial size of the connection pool.
+     */
     public static final int INITIAL_SIZE = 12;
+
+    /**
+     * The maximum size of the connection pool.
+     */
     public static final int MAX_SIZE = 15;
+
+    /**
+     * The maximum idle time for a connection in the pool (in minutes).
+     */
     public static final int MAX_IDLE_TIME = 30;
 
+    /**
+     * Creates the connection factory bean for the PostgreSQL connection pool.
+     *
+     * @param properties the connection properties
+     * @return the configured connection factory
+     */
     @Bean
     @ConditionalOnMissingBean(ConnectionFactory.class)
     public ConnectionFactory connectionFactory(PostgresqlConnectionProperties properties) {
