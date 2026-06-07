@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"pe.ask.persistence.core.config"},{"l":"pe.ask.persistence.core.exception"},{"l":"pe.ask.persistence.core.helper"},{"l":"pe.ask.persistence.core.mapper"},{"l":"pe.ask.persistence.core.models"}];updateSearchResults();
