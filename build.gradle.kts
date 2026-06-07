@@ -1,10 +1,10 @@
 plugins {
-	id("java-library")
-	id("maven-publish")
+	alias(libs.plugins.java.library)
+	alias(libs.plugins.maven.publish)
 }
 
 group = "pe.ask"
-version = "0.0.1-SNAPSHOT"
+version = "1.1.0"
 
 java {
 	toolchain {
@@ -14,21 +14,27 @@ java {
 
 repositories {
 	mavenCentral()
+	maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
-	val springBootVersion = "4.0.5"
-	api(platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion"))
+	api(platform(libs.spring.boot.dependencies))
 
-	api("org.springframework.boot:spring-boot-starter-data-r2dbc")
-	api("com.fasterxml.jackson.core:jackson-databind")
+	implementation(libs.commons.exception.core)
 
-	implementation("org.postgresql:r2dbc-postgresql")
+	compileOnly(libs.lombok)
+	annotationProcessor(libs.lombok)
+	testCompileOnly(libs.lombok)
+	testAnnotationProcessor(libs.lombok)
 
-	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion")
-	annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor:$springBootVersion")
+	api(libs.spring.boot.starter.data.r2dbc)
 
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation(libs.r2dbc.postgresql)
+
+	annotationProcessor(libs.spring.boot.configuration.processor)
+	annotationProcessor(libs.spring.boot.autoconfigure.processor)
+
+	testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 publishing {
@@ -37,7 +43,7 @@ publishing {
 			from(components["java"])
 			pom {
 				name.set("SQL Persistence Core")
-				description.set("Librería core de persistencia reactiva para los microservicios")
+				description.set("Core library for reactive SQL persistence, providing generic adapters, automatic mapping, and pagination helpers for Spring WebFlux.")
 			}
 		}
 	}

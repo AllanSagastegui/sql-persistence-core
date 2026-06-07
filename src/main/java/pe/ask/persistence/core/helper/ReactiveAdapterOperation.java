@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+@Deprecated(since = "1.0.4")
 public abstract class ReactiveAdapterOperation<D, E, I, R extends ReactiveCrudRepository<E, I> & ReactiveQueryByExampleExecutor<E>> {
     protected R repository;
     protected ObjectMapper mapper;
