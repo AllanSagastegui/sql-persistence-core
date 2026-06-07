@@ -1,6 +1,7 @@
 plugins {
 	alias(libs.plugins.java.library)
 	alias(libs.plugins.maven.publish)
+	alias(libs.plugins.jacoco)
 }
 
 group = "pe.ask"
@@ -12,28 +13,31 @@ java {
 	}
 }
 
+jacoco {
+	toolVersion = "0.8.12"
+}
+
 repositories {
 	mavenCentral()
 	maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
-	api(platform(libs.spring.boot.dependencies))
 
+	api(platform(libs.spring.boot.dependencies))
+	api(libs.spring.boot.starter.data.r2dbc)
+
+	implementation(libs.jackson.databind)
 	implementation(libs.commons.exception.core)
+	implementation(libs.r2dbc.postgresql)
 
 	compileOnly(libs.lombok)
 	annotationProcessor(libs.lombok)
-	testCompileOnly(libs.lombok)
-	testAnnotationProcessor(libs.lombok)
-
-	api(libs.spring.boot.starter.data.r2dbc)
-
-	implementation(libs.r2dbc.postgresql)
-
 	annotationProcessor(libs.spring.boot.configuration.processor)
 	annotationProcessor(libs.spring.boot.autoconfigure.processor)
 
+	testCompileOnly(libs.lombok)
+	testAnnotationProcessor(libs.lombok)
 	testRuntimeOnly(libs.junit.platform.launcher)
 }
 
@@ -49,6 +53,16 @@ publishing {
 	}
 }
 
-tasks.withType<Test> {
+tasks.test {
 	useJUnitPlatform()
+	finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+	}
 }

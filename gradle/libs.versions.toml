@@ -1,20 +1,23 @@
 [versions]
 springBoot = "4.0.5"
 exceptions-core = "v4"
+lombok-version = "1.18.34"
 
 [libraries]
 spring-boot-dependencies = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "springBoot" }
 
 commons-exception-core = { group = "com.github.QillqaSoft", name = "commons-exception-core", version.ref = "exceptions-core" }
+jackson-databind = { group = "com.fasterxml.jackson.core", name ="jackson-databind" }
 
 spring-boot-starter-data-r2dbc = { group = "org.springframework.boot", name = "spring-boot-starter-data-r2dbc" }
 spring-boot-configuration-processor = { group = "org.springframework.boot", name = "spring-boot-configuration-processor", version.ref = "springBoot" }
 spring-boot-autoconfigure-processor = { group = "org.springframework.boot", name = "spring-boot-autoconfigure-processor", version.ref = "springBoot" }
 
-lombok = { group = "org.projectlombok", name = "lombok" }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok-version" }
 r2dbc-postgresql = { group = "org.postgresql", name = "r2dbc-postgresql" }
 junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 
 [plugins]
 java-library = { id = "java-library" }
 maven-publish = { id = "maven-publish" }
+jacoco = { id = "jacoco" }
