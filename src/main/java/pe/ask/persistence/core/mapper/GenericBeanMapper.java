@@ -41,7 +41,9 @@ public class GenericBeanMapper<D, E> {
     public E toEntity(D domain) {
         try {
             E entity = entityClass.getDeclaredConstructor().newInstance();
-            BeanUtils.copyProperties(domain, entity);
+            if (domain != null) {
+                BeanUtils.copyProperties(domain, entity);
+            }
             return entity;
         } catch (Exception e) {
             throw new MapFailedException();
@@ -58,7 +60,9 @@ public class GenericBeanMapper<D, E> {
     public D toDomain(E entity) {
         try {
             D domain = domainClass.getDeclaredConstructor().newInstance();
-            BeanUtils.copyProperties(entity, domain);
+            if (entity != null) {
+                BeanUtils.copyProperties(entity, domain);
+            }
             return domain;
         } catch (Exception e) {
             throw new MapFailedException();
