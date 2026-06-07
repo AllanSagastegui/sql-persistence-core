@@ -205,9 +205,9 @@ public abstract class ReactiveOperationsHelper <D, E, I, R extends ReactiveCrudR
                         springPage.getContent().stream().map(this::toDomain).toList(),
                         springPage.getNumber(),
                         springPage.getSize(),
-                        springPage.getTotalElements(),
-                        springPage.getTotalPages(),
-                        springPage.isLast()
+                        springPage.isLast(),
+                        springPage.hasPrevious(),
+                        springPage.hasNext()
                 ));
     }
 
