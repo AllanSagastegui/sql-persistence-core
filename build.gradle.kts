@@ -1,10 +1,11 @@
 plugins {
-	id("java-library")
-	id("maven-publish")
+	alias(libs.plugins.java.library)
+	alias(libs.plugins.maven.publish)
+	alias(libs.plugins.jacoco)
 }
 
 group = "pe.ask"
-version = "0.0.1-SNAPSHOT"
+version = "1.1.0"
 
 java {
 	toolchain {
@@ -12,23 +13,32 @@ java {
 	}
 }
 
+jacoco {
+	toolVersion = "0.8.12"
+}
+
 repositories {
 	mavenCentral()
+	maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
-	val springBootVersion = "4.0.5"
-	api(platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion"))
 
-	api("org.springframework.boot:spring-boot-starter-data-r2dbc")
-	api("com.fasterxml.jackson.core:jackson-databind")
+	api(platform(libs.spring.boot.dependencies))
+	api(libs.spring.boot.starter.data.r2dbc)
 
-	implementation("org.postgresql:r2dbc-postgresql")
+	implementation(libs.jackson.databind)
+	implementation(libs.commons.exception.core)
+	implementation(libs.r2dbc.postgresql)
 
-	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion")
-	annotationProcessor("org.springframework.boot:spring-boot-autoconfigure-processor:$springBootVersion")
+	compileOnly(libs.lombok)
+	annotationProcessor(libs.lombok)
+	annotationProcessor(libs.spring.boot.configuration.processor)
+	annotationProcessor(libs.spring.boot.autoconfigure.processor)
 
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testCompileOnly(libs.lombok)
+	testAnnotationProcessor(libs.lombok)
+	testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 publishing {
@@ -37,12 +47,22 @@ publishing {
 			from(components["java"])
 			pom {
 				name.set("SQL Persistence Core")
-				description.set("Librería core de persistencia reactiva para los microservicios")
+				description.set("Core library for reactive SQL persistence, providing generic adapters, automatic mapping, and pagination helpers for Spring WebFlux.")
 			}
 		}
 	}
 }
 
-tasks.withType<Test> {
+tasks.test {
 	useJUnitPlatform()
+	finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+	}
 }
