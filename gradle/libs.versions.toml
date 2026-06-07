@@ -1,7 +1,7 @@
 [versions]
-springBoot = "4.0.5"
+springBoot = "4.0.6"
 exceptions-core = "v4"
-lombok-version = "1.18.34"
+lombok-version = "1.18.46"
 
 [libraries]
 spring-boot-dependencies = { group = "org.springframework.boot", name = "spring-boot-dependencies", version.ref = "springBoot" }
