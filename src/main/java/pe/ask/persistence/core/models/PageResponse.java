@@ -3,6 +3,7 @@ package pe.ask.persistence.core.models;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -15,14 +16,9 @@ import java.util.List;
  */
 @Data
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class PageResponse<T> {
-
-    /**
-     * Default constructor for PageResponse.
-     */
-    public PageResponse() {
-    }
 
     /**
      * The list of items in the page.
@@ -40,17 +36,17 @@ public class PageResponse<T> {
     private int pageSize;
 
     /**
-     * The total number of elements across all pages.
-     */
-    private long totalElements;
-
-    /**
-     * The total number of pages.
-     */
-    private int totalPages;
-
-    /**
      * Whether this is the last page.
      */
     private boolean isLast;
+
+    /**
+     * Has previous?.
+     */
+    private boolean hasPrevious;
+
+    /**
+     * Has next?.
+     */
+    private boolean hasNext;
 }
